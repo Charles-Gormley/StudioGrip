@@ -37,7 +37,7 @@ const StudioGrip = () => {
 
     // GLTF Loader
     const loader = new GLTFLoader();
-    loader.load('models/grip-new.gltf', (gltf) => {
+    loader.load('models/studio-grip-new-prod.gltf', (gltf) => {
       const model = gltf.scene;
       const scale = .8
       model.scale.set(scale, scale, scale);
