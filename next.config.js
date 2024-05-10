@@ -1,16 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  rewrites: async () => {
-    return [
-      {
-        source: '/api/:path*',
-        destination:
-          process.env.NODE_ENV === 'development'
-            ? 'http://127.0.0.1:5328/api/:path*'
-            : '/api/',
-      },
-    ]
-  },
-}
-
-module.exports = nextConfig
+    pageExtensions: ["js", "jsx", "ts", "tsx", "mdx"],
+  }
+  
+  const withNextra = require('nextra')({
+    theme: 'nextra-theme-docs',
+    themeConfig: './theme.config.jsx'
+  })
+  
+  module.exports = withNextra(nextConfig)

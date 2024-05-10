@@ -7,7 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
-      
+      colors: {
+        darkmode: '#ffffff',  // Example: default dark mode background color
+      },
       fontSize: {
         'h1': '64px',
         'h2': '36px',
@@ -21,7 +23,11 @@ module.exports = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      backgroundColor: {
+        'dark': '#1a202c', // Add your desired dark mode background color here
+      }
     },
   },
   plugins: [],
+  darkMode: 'class', // Ensure dark mode is triggered using class strategy
 }

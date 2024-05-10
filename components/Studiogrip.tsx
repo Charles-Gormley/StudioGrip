@@ -4,13 +4,20 @@ import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { randomInt } from 'crypto';
+
+
 
 const StudioGrip = () => {
   const mountRef = useRef(null);
   const [isUserInteracting, setIsUserInteracting] = useState(false);
 
   useEffect(() => {
+
+    const isDarkMode = document.documentElement.classList.contains('dark');
+
+    if (!mountRef.current) {
+      return;
+    }
     const width = mountRef.current.clientWidth;
     const height = mountRef.current.clientHeight;
     const scene = new THREE.Scene();
@@ -22,32 +29,71 @@ const StudioGrip = () => {
 
     mountRef.current.appendChild(renderer.domElement);
 
+   
+
     // Lighting
-    const lightIntensity = 10;
+    const lightIntensity = 60;
+    const positionScalar = 2;
+
     // Ambient light
     const ambientLight = new THREE.AmbientLight(0xffffff, lightIntensity);
     scene.add(ambientLight);
+
     const directionalLight = new THREE.DirectionalLight(0xffffff, lightIntensity);
-    directionalLight.position.set(1, 0, 0).normalize();
+    directionalLight.position.set(1*positionScalar, -1*positionScalar, 1*positionScalar).normalize();
     scene.add(directionalLight);
 
     const directionalLight2 = new THREE.DirectionalLight(0xffffff, lightIntensity);
-    directionalLight2.position.set(-2, 0, 0).normalize();
+    directionalLight2.position.set(-1*positionScalar, -1*positionScalar, -1*positionScalar).normalize();
     scene.add(directionalLight2);
+
+    const directionalLight3 = new THREE.DirectionalLight(0xffffff, lightIntensity);
+    directionalLight3.position.set(1*positionScalar, 1*positionScalar, 1*positionScalar).normalize();
+    scene.add(directionalLight3);
+
+    const directionalLight4 = new THREE.DirectionalLight(0xffffff, lightIntensity);
+    directionalLight4.position.set(-1*positionScalar, 1*positionScalar, -1*positionScalar).normalize();
+    scene.add(directionalLight4);
 
     // GLTF Loader
     const loader = new GLTFLoader();
-    loader.load('models/studio-grip-new-prod.gltf', (gltf) => {
+    const modelPath = isDarkMode ? 'models/grip.gltf' : 'models/studio-grip-new-prod.gltf';
+    loader.load(modelPath, (gltf) => {
       const model = gltf.scene;
-      const scale = .8
+      
+      model.traverse((child: { isMesh: any; material: any; }) => {
+        if (child.isMesh) {
+          // Get the material of the mesh
+          const material = child.material;
+          const color = 0xFFFFFF;
+    
+          // Create a new material
+          const newMaterial = new THREE.MeshStandardMaterial({
+            color: color,
+            roughness: 0.2,
+            metalness: 1,
+            
+          });
+    
+          // Set the properties of the new material
+          newMaterial.color.set(color);
+    
+          // Assign the new material to the mesh
+          child.material = newMaterial;
+        }
+      });
+
+
+      const scale = .04
       model.scale.set(scale, scale, scale);
       model.position.set(0, 0, 0);
+      
       scene.add(model);
 
       // OrbitControls
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
+      controls.dampingFactor = 0.01;
       controls.enableZoom = false;
       controls.enablePan = false;
 
@@ -56,7 +102,7 @@ const StudioGrip = () => {
 
       const animate = () => {
         requestAnimationFrame(animate);
-        const rotationSpeed = 0.003;
+        const rotationSpeed = 0.001;
 
         
 
@@ -80,8 +126,8 @@ const StudioGrip = () => {
       mountRef.current.removeChild(renderer.domElement);
     };
   }, []);
+  return <div ref={mountRef} className="relative order-10 w-full h-full" style={{ height: '75vh' }} />;
 
-  return <div ref={mountRef} style={{ width: '120%', height: '75vh' }} />;
 };
 
 export default StudioGrip;
